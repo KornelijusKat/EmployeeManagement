@@ -15,6 +15,8 @@ namespace EmployeeManagement
             if (!IsPostBack)
             {
                 BindGridView();
+                //BindWorkersToGrid();
+             
             }
         }
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
@@ -88,6 +90,43 @@ namespace EmployeeManagement
         {
             GridView1.EditIndex = -1;
             BindGridView();
+        }
+        private void BindWorkersToGrid()
+        {
+            var db = new DbContext();
+            GridViewWorker.DataSource = db.GetAllWorkers();
+            GridViewWorker.DataBind();
+        }
+
+        protected void btnAssignTask_Click(object sender, EventArgs e)
+        {
+            //GridViewRow selectedRow = GridViewWorker.SelectedRow;
+            //int dataKey = Convert.ToInt32(GridViewWorker.DataKeys[selectedRow.RowIndex].Value);
+            Button btnAssignTask = (Button)sender;
+            GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
+            int dataKey = Convert.ToInt32(GridViewWorker.DataKeys[clickedRow.RowIndex].Value);
+            if (Session["SelectedDataKey"] != null)
+            {
+                int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
+                var db = new DbContext();
+                db.WorkerToTask(taskDataKey, dataKey);
+            }
+
+        }
+
+        protected void btnChangeGrid_Click(object sender, EventArgs e)
+        {
+            GridViewRow selectedRow = GridView1.SelectedRow;
+            int dataKey = Convert.ToInt32(GridView1.DataKeys[selectedRow.RowIndex].Value);
+            Session["SelectedDataKey"] = dataKey;
+            GridView1.Visible = false;
+            GridViewWorker.Visible = true;
+            BindWorkersToGrid();
+        }
+
+        protected void ddlWorkers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

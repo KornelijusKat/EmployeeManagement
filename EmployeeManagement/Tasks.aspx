@@ -51,7 +51,14 @@
         </asp:TemplateField>
         <asp:CommandField ShowEditButton="True" />
         <asp:CommandField ShowDeleteButton="True" />
+        <asp:CommandField ShowSelectButton="true" />
+        <asp:TemplateField>
+            <ItemTemplate>
+                   <asp:Button ID="btnChangeGrid" runat="server" Text="Assign worker" OnClick="btnChangeGrid_Click" />
+            </ItemTemplate>   
+        </asp:TemplateField>       
     </Columns>
+
             <EditRowStyle BackColor="#999999" />
             <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
             <HeaderStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
@@ -63,6 +70,28 @@
             <SortedDescendingCellStyle BackColor="#FFFDF8" />
             <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
 </asp:GridView>
+    <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="false">
+        <Columns>
+              <asp:BoundField DataField="Id" HeaderText="ID" />
+        <asp:TemplateField HeaderText="Name">
+            <ItemTemplate>
+                <%# Eval("Name") %>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Last Name">
+            <ItemTemplate>
+                <%# Eval("LastName") %>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField>
+            <ItemTemplate>
+                <asp:Button ID="btnAssignTask" runat="server" Text="Select Worker" OnClick="btnAssignTask_Click"/>
+   <%--             <asp:Button ID="EditButton" runat="server" Text="Edit" CommandName="Edit" />
+                <asp:Button ID="DeleteButton" runat="server" Text="Delete" CommandName="Delete" />--%>
+            </ItemTemplate>
+        </asp:TemplateField>
+        </Columns>
+    </asp:GridView>
         <asp:Button ID="btnShowCreateTaskForm" runat="server" Text="Create New Task" OnClick="btnShowCreateTaskForm_Click" />
 
 
