@@ -28,6 +28,52 @@ namespace EmployeeManagement.Models
                 cmd.ExecuteNonQuery();
             }
         }
+        public void EditTask(Task task)
+        {
+            using(var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "UPDATE tasks SET";
+                var parameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(task.Name))
+                {
+                    query += " name = @name,";
+                    parameters.Add(new MySqlParameter("@name", task.Name));
+                }
+
+                if (task.Status != null)
+                {
+                    query += " status = @status,";
+                    int tinyInt = task.Status ? 0 : 1;
+                    parameters.Add(new MySqlParameter("@status", tinyInt));
+                }
+
+                if (task.Description != null)
+                {
+                    query += " description = @description,";
+                    parameters.Add(new MySqlParameter("@description", task.Description));
+                }
+                if (task.DueBy != null)
+                {
+                    query += " due_by = @dueBy,";
+                    parameters.Add(new MySqlParameter("@dueBy", task.DueBy));
+                }
+                if(task.Created != null)
+                {
+                    query += " created = @created,";
+                    parameters.Add(new MySqlParameter("@created", task.Created));
+                }
+                query = query.TrimEnd(',');
+                query += " WHERE Id = @Id";
+                parameters.Add(new MySqlParameter("@Id", task.Id));
+                using (var cmd = new MySqlCommand(query, sqlCon))
+                {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public void CreateTask(string name, string description, bool status, DateTime dueBy, DateTime created)
         {
             using (var sqlCon = GetConnection())
@@ -68,6 +114,17 @@ namespace EmployeeManagement.Models
                 }
             }
             return tasks;
+        }
+        public void DeleteTask(int Id)
+        {
+            using(var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "DELETE FROM tasks WHERE id = @ID";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("@ID", Id);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

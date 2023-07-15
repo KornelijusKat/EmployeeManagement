@@ -15,12 +15,10 @@ namespace EmployeeManagement
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+  
             if (!IsPostBack)
             {
-                var db = new DbContext();
-                var tasks = db.GetAllTasks();
-                string tableHtml = LoadTasks(tasks);
-                tasksTablePlaceholder.Controls.Add(new LiteralControl(tableHtml));
+                tasksLiteral.Text = LoadTasks();
             }
         }
         protected void btnRedirect_Click(object sender, EventArgs e)
@@ -36,12 +34,14 @@ namespace EmployeeManagement
             DateTime created = DateTime.Parse(Request.Form["txtCreated"]);
             var dbContext = new DbContext();
             dbContext.CreateTask(name,description,status,dueBy,created);
+            tasksLiteral.Text = LoadTasks();
         }
         protected void btnOpenForm_Click(object sender, EventArgs e)
         {
             string formHtml = GenerateFormHtml();
             formPlaceholder.Controls.Add(new LiteralControl(formHtml));
-            CreateDynamicButton();
+            btnCreateTask.Visible = true;
+            //CreateDynamicButton();
         }
         public string GenerateFormHtml()
         {
@@ -68,21 +68,13 @@ namespace EmployeeManagement
             formHtml.Append("<input type='datetime-local' id='txtCreated' name='txtCreated' runat='server' />");
             formHtml.Append("</div>");
             formHtml.Append("</form>");
-
             return formHtml.ToString();
         }
-        string LoadTasks(List<Task> tasks)
+        string LoadTasks()
         {
+            var db = new DbContext();
+            var tasks = db.GetAllTasks();
             StringBuilder tableHtml = new StringBuilder();
-            tableHtml.Append("<table class='taskTable'>");
-            tableHtml.Append("<tr>");
-            tableHtml.Append("<th>ID</th>");
-            tableHtml.Append("<th>Name</th>");
-            tableHtml.Append("<th>Description</th>");
-            tableHtml.Append("<th>Status</th>");
-            tableHtml.Append("<th>Due By</th>");
-            tableHtml.Append("<th>Created</th>");
-            tableHtml.Append("</tr>");
             foreach (Task task in tasks)
             {
                 tableHtml.Append("<tr>");
@@ -92,19 +84,17 @@ namespace EmployeeManagement
                 tableHtml.Append($"<td>{task.Status}</td>");
                 tableHtml.Append($"<td>{task.DueBy}</td>");
                 tableHtml.Append($"<td>{task.Created}</td>");
+                tableHtml.Append("<td> <button class='editButton' onclick='btnEditTask'>Edit</button> </td>");
                 tableHtml.Append("</tr>");
+                
             }
-            tableHtml.Append("</table>");
             return tableHtml.ToString();
-
         }
-        private void CreateDynamicButton()
+        protected void btnEditRow_Click(object sender, EventArgs e)
         {
-            Button dynamicButton = new Button();
-            dynamicButton.ID = "btnProcessData";
-            dynamicButton.Text = "Submit";
-            dynamicButton.Click += btnCreateTask_Click;
-            formPlaceholder.Controls.Add(dynamicButton);
+            string formHtml = GenerateFormHtml();
+            formPlaceholder.Controls.Add(new LiteralControl(formHtml));
+            btnEditTask.Visible = true;
         }
     }
 }
