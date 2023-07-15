@@ -115,6 +115,52 @@ namespace EmployeeManagement.Models
             }
             return tasks;
         }
+        public List<Worker> GetAllWorkersByTaskID(int taskId)
+        {
+            var workers = new List<Worker>();
+            using(var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "SELECT * From workers INNER JOIN workertask ON worker_id WHERE task_id = @taskId";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                using(MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        workers.Add(new Worker()
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            LastName = reader.GetString("last_name")
+                        });
+                    }
+                }
+            }
+            return workers;
+        }
+        public List<Worker> GetAllWorkers()
+        {
+            var workers = new List<Worker>();
+            using(var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "SELECT * FROM workers";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                using(MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        workers.Add(new Worker()
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            LastName = reader.GetString("last_name")
+                        });
+                    }
+                }
+            }
+            return workers;
+        }
         public void DeleteTask(int Id)
         {
             using(var sqlCon = GetConnection())
@@ -124,6 +170,21 @@ namespace EmployeeManagement.Models
                 MySqlCommand cmd = new MySqlCommand(query, sqlCon);
                 cmd.Parameters.AddWithValue("@ID", Id);
                 cmd.ExecuteNonQuery();
+            }
+        }
+        public void WorkerToTask(int taskId, int workerId)
+        {
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "INSERT INTO workertask (worker_id, task_id) values (@workerId, @taskId)"
+                + "ON DUPLICATE KEY UPDATE worker_id = worker_id";
+                using (var cmd = new MySqlCommand(query, sqlCon))
+                {
+                    cmd.Parameters.AddWithValue("@taskId", taskId);
+                    cmd.Parameters.AddWithValue("@workerId", workerId);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }
