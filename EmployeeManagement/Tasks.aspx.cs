@@ -14,9 +14,7 @@ namespace EmployeeManagement
         {
             if (!IsPostBack)
             {
-                BindGridView();
-                //BindWorkersToGrid();
-             
+                BindGridView();            
             }
         }
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
@@ -34,24 +32,18 @@ namespace EmployeeManagement
         {
             GridViewRow row = GridView1.Rows[e.RowIndex];
             int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
-
             TextBox textBoxName = row.FindControl("TextBoxName") as TextBox;
             TextBox textBoxDescription = row.FindControl("TextBoxDescription") as TextBox;
             Calendar calCreated = row.FindControl("TextBoxCreated") as Calendar;
-            //TextBox textBoxCreated = row.FindControl("TextBoxCreated") as TextBox;
             Calendar calDueBy = row.FindControl("TextBoxDueBy") as Calendar;
             DropDownList dropDownList = row.FindControl("DropDownListStatus") as DropDownList;
-            // Get the new values from the TextBox controls
             string name = textBoxName.Text;
             string description = textBoxDescription.Text;
             DateTime created = calCreated.SelectedDate;
             DateTime dueBy = calDueBy.SelectedDate;
             bool status =bool.Parse(dropDownList.SelectedValue);
-            // Update the task in the database
             var db = new DbContext();
             db.EditTask(new Task { Id = id, Name = name, Description = description, Created = created, DueBy = dueBy, Status = status });
-
-            // Exit edit mode
             GridView1.EditIndex = -1;
             BindGridView();
         }
@@ -97,11 +89,15 @@ namespace EmployeeManagement
             GridViewWorker.DataSource = db.GetAllWorkers();
             GridViewWorker.DataBind();
         }
+        private void BindAssignedWorkersToGrid(int taskId)
+        {
+            var db = new DbContext();
+            GridView2.DataSource = db.GetAllWorkersByTaskID(taskId);
+            GridView2.DataBind();
+        }
 
         protected void btnAssignTask_Click(object sender, EventArgs e)
         {
-            //GridViewRow selectedRow = GridViewWorker.SelectedRow;
-            //int dataKey = Convert.ToInt32(GridViewWorker.DataKeys[selectedRow.RowIndex].Value);
             Button btnAssignTask = (Button)sender;
             GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
             int dataKey = Convert.ToInt32(GridViewWorker.DataKeys[clickedRow.RowIndex].Value);
@@ -110,22 +106,51 @@ namespace EmployeeManagement
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
                 var db = new DbContext();
                 db.WorkerToTask(taskDataKey, dataKey);
+                BindAssignedWorkersToGrid(taskDataKey);
             }
 
         }
 
         protected void btnChangeGrid_Click(object sender, EventArgs e)
         {
-            GridViewRow selectedRow = GridView1.SelectedRow;
-            int dataKey = Convert.ToInt32(GridView1.DataKeys[selectedRow.RowIndex].Value);
+            Button btnAssignTask = (Button)sender;
+            GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
+            int dataKey = Convert.ToInt32(GridView1.DataKeys[clickedRow.RowIndex].Value);
             Session["SelectedDataKey"] = dataKey;
             GridView1.Visible = false;
             GridViewWorker.Visible = true;
+            GridView2.Visible = true;
             BindWorkersToGrid();
+            BindAssignedWorkersToGrid(dataKey);
         }
-
-        protected void ddlWorkers_SelectedIndexChanged(object sender, EventArgs e)
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+            var db = new DbContext();
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                GridView GridViewWorkers = e.Row.FindControl("GridViewWorkers") as GridView;
+                if (GridViewWorkers != null)
+                {
+                    int taskId = (int)DataBinder.Eval(e.Row.DataItem, "Id");
+                    List<Worker> workers = db.GetAllWorkersByTaskID(taskId);
+                    GridViewWorkers.DataSource = workers;
+                    GridViewWorkers.DataBind();
+                }
+            }
+        }
+        protected void btnUnAssignTask_Click(object sender, EventArgs e)
+        {
+            var db = new DbContext();
+            Button btnUnAssignTask = (Button)sender;
+            GridViewRow clickedRow = (GridViewRow)btnUnAssignTask.NamingContainer;
+            int dataKey = Convert.ToInt32(GridView2.DataKeys[clickedRow.RowIndex].Value);
+            if (Session["SelectedDataKey"] != null)
+            {
+                int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
+                db.DeleteWorkerTaskPair(taskDataKey, dataKey);
+                BindAssignedWorkersToGrid(taskDataKey);
+
+            }
 
         }
     }
