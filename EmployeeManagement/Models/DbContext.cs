@@ -121,8 +121,9 @@ namespace EmployeeManagement.Models
             using(var sqlCon = GetConnection())
             {
                 sqlCon.Open();
-                string query = "SELECT * From workers INNER JOIN workertask ON worker_id WHERE task_id = @taskId";
+                string query = "SELECT DISTINCT workers.id,workers.name, workers.last_name From workers INNER JOIN workertask ON workertask.worker_id = id WHERE workertask.task_id = @taskId";
                 MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("taskId", taskId);
                 using(MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while(reader.Read())
@@ -183,6 +184,20 @@ namespace EmployeeManagement.Models
                 {
                     cmd.Parameters.AddWithValue("@taskId", taskId);
                     cmd.Parameters.AddWithValue("@workerId", workerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void DeleteWorkerTaskPair(int taskId, int workerId)
+        {
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "DELETE FROM management.workertask WHERE worker_id = @workerId AND task_id = @taskId";
+                using (var cmd = new MySqlCommand(query, sqlCon))
+                {
+                    cmd.Parameters.AddWithValue("@workerId", workerId);
+                    cmd.Parameters.AddWithValue("@taskId", taskId);
                     cmd.ExecuteNonQuery();
                 }
             }
