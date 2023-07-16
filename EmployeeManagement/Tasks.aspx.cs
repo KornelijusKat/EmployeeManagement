@@ -54,6 +54,7 @@ namespace EmployeeManagement
         protected void btnShowCreateTaskForm_Click(object sender, EventArgs e)
         {
             createTaskPanel.Visible = true;
+            btnShowCreateTaskForm.Visible = false;
         }
         protected void btnCreateTask_Click(object sender, EventArgs e)
         {
@@ -113,6 +114,9 @@ namespace EmployeeManagement
 
         protected void btnChangeGrid_Click(object sender, EventArgs e)
         {
+            createTaskPanel.Visible = false;
+            btnShowCreateTaskForm.Visible = false;
+            btnReturnToTasks.Visible = true;
             Button btnAssignTask = (Button)sender;
             GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
             int dataKey = Convert.ToInt32(GridView1.DataKeys[clickedRow.RowIndex].Value);
@@ -149,9 +153,25 @@ namespace EmployeeManagement
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
                 db.DeleteWorkerTaskPair(taskDataKey, dataKey);
                 BindAssignedWorkersToGrid(taskDataKey);
-
             }
+        }
+        protected void btnReturnToTasks_Click(object sender, EventArgs e)
+        {
+            GridViewWorker.Visible = false;
+            GridView2.Visible = false;
+            btnReturnToTasks.Visible = false;
+            GridView1.Visible = true;
+            btnShowCreateTaskForm.Visible = true;
+        }
 
+        protected void btnViewWorkersTask_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            createTaskPanel.Visible = false;
         }
     }
 }
