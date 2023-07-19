@@ -18,4 +18,5 @@ namespace EmployeeManagement
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
+
 }

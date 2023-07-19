@@ -85,4 +85,3 @@ C:\Users\Kornelijus\source\repos\EmployeeManagement\EmployeeManagement\obj\Debug
 C:\Users\Kornelijus\source\repos\EmployeeManagement\EmployeeManagement\obj\Debug\EmployeeManagement.dll
 C:\Users\Kornelijus\source\repos\EmployeeManagement\EmployeeManagement\obj\Debug\EmployeeManagement.pdb
 C:\Users\Kornelijus\source\repos\EmployeeManagement\EmployeeManagement\obj\Debug\EmployeeManagement.csproj.AssemblyReference.cache
-C:\Users\Kornelijus\source\repos\EmployeeManagement\EmployeeManagement\obj\Debug\EmployeeManagement.csproj.CopyComplete
