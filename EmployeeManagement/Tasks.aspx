@@ -1,16 +1,18 @@
 ﻿<%@ Page Title="Tasks" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Tasks.aspx.cs" Inherits="EmployeeManagement.Tasks" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h3>Tasks page</h3>
-        <asp:GridView ID="GridView1" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" Height="215px">
+        <h3> </h3>
+        <asp:GridView ID="GridView1" runat="server" DataKeyNames="Id, Status" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" Height="215px">
             <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
     <Columns>
-        <asp:BoundField DataField="Id" HeaderText="ID" />
+        <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
         <asp:TemplateField HeaderText="Name">
             <ItemTemplate>
                 <%# Eval("Name") %>
             </ItemTemplate>
             <EditItemTemplate>
+                  <asp:RequiredFieldValidator ID="RequiredFieldValidatorName" runat="server"
+            ControlToValidate="TextBoxName" ErrorMessage="Name is required"></asp:RequiredFieldValidator>
                 <asp:TextBox ID="TextBoxName" runat="server" Text='<%# Bind("Name") %>'></asp:TextBox>
             </EditItemTemplate>
         </asp:TemplateField>
@@ -19,6 +21,8 @@
                 <%# Eval("Description") %>
             </ItemTemplate>
             <EditItemTemplate>
+                <asp:RequiredFieldValidator ID="ValidatorForTaskNameEdit" runat="server"
+            ControlToValidate="TextBoxDescription" ErrorMessage="Description is required"></asp:RequiredFieldValidator>
                 <asp:TextBox ID="TextBoxDescription" runat="server" Text='<%# Bind("Description") %>'></asp:TextBox>
             </EditItemTemplate>
         </asp:TemplateField>
@@ -26,9 +30,6 @@
             <ItemTemplate>
                 <%# Eval("Created") %>
             </ItemTemplate>
-            <EditItemTemplate>
-                <asp:Calendar ID="TextBoxCreated" runat="server" SelectedDate='<%# Bind("Created") %>'></asp:Calendar>
-            </EditItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="DueBy">
             <ItemTemplate>
@@ -44,6 +45,7 @@
             </ItemTemplate>
             <EditItemTemplate>
                 <asp:DropDownList ID="DropDownListStatus" runat="server">
+                    <asp:ListItem Text="-- Select --" Value=""></asp:ListItem>
                     <asp:ListItem Text="In Progress" Value="true"></asp:ListItem>
                     <asp:ListItem Text="Complete" Value="false"></asp:ListItem>
                 </asp:DropDownList>
@@ -69,6 +71,8 @@
             <SortedDescendingCellStyle BackColor="#FFFDF8" />
             <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
 </asp:GridView>
+    <asp:Panel ID="allWorkerPanel" runat="server" Visible="false"> 
+        <asp:Label ID="Label2" runat="server" Text="All workers"></asp:Label>
     <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
@@ -100,8 +104,11 @@
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
     </asp:GridView>
+        </asp:Panel>
     <asp:Button ID="btnReturnToTasks" runat="server" Text="Cancel assigning" visible="false" OnClick="btnReturnToTasks_Click" />
-      <asp:GridView ID="GridView2" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None">
+    <asp:panel ID="assignedWorkerPanel" CssClass="panels" visible="false" runat="server">
+        <asp:Label ID="lblGridViewHeader" runat="server" Text="Assigned Workers to Task"></asp:Label>
+      <asp:GridView ID="GridView2" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
               <asp:BoundField DataField="Id" HeaderText="ID" />
@@ -118,8 +125,6 @@
         <asp:TemplateField>
             <ItemTemplate>
                 <asp:Button ID="btnUnAssignTask" runat="server" Text="UnAssign Worker" OnClick="btnUnAssignTask_Click"/>
-                    <%--             <asp:Button ID="EditButton" runat="server" Text="Edit" CommandName="Edit" />
-                <asp:Button ID="DeleteButton" runat="server" Text="Delete" CommandName="Delete" />--%>
             </ItemTemplate>
         </asp:TemplateField>
         </Columns>
@@ -134,34 +139,26 @@
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
     </asp:GridView>
+   </asp:panel>
+
         <asp:Button ID="btnShowCreateTaskForm" runat="server" Text="Create New Task" OnClick="btnShowCreateTaskForm_Click" />
-
-
-        <asp:Panel ID="createTaskPanel" runat="server" CssClass="create-task-panel" Visible="false" >
+        <asp:Panel ID="createTaskPanel" runat="server" CssClass="create-task-panel" Visible="false" >            
               <div class="formDiv">
+                  <asp:RequiredFieldValidator ID="ValidatorForNewTaskName" runat="server"
+            ControlToValidate="TxtName" ErrorMessage="Name is required"></asp:RequiredFieldValidator>
             <asp:Label ID="lblName" runat="server" Text="Name" AssociatedControlID="txtName"></asp:Label>
             <asp:TextBox ID="txtName" runat="server" />
                   </div>
               <div class="formDiv">
+                  <asp:RequiredFieldValidator ID="ValidatorForNewTaskDescription" runat="server"
+            ControlToValidate="txtDescription" ErrorMessage="Description is required"></asp:RequiredFieldValidator>
             <asp:Label ID="lblDescription" runat="server" AssociatedControlID="txtDescription" Text="Description"></asp:Label>
             <asp:TextBox ID="txtDescription" runat="server" />
                   </div>
              <div class="formDiv">
-            <asp:Label ID="lblDueBy" runat="server" AssociatedControlID="calendarDueBy" Text="DueBy"></asp:Label>
-            <asp:Calendar ID="calendarDueBy" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="180px" Width="200px">
-                <DayHeaderStyle BackColor="#CCCCCC" Font-Bold="True" Font-Size="7pt" />
-                <NextPrevStyle VerticalAlign="Bottom" />
-                <OtherMonthDayStyle ForeColor="#808080" />
-                <SelectedDayStyle BackColor="#666666" Font-Bold="True" ForeColor="White" />
-                <SelectorStyle BackColor="#CCCCCC" />
-                <TitleStyle BackColor="#999999" BorderColor="Black" Font-Bold="True" />
-                <TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
-                <WeekendDayStyle BackColor="#FFFFCC" />
-            </asp:Calendar>
-                 </div>
-             <div class="formDiv">
-            <asp:Label ID="lblCreated" runat="server" AssociatedControlID="calendarCreated" Text="Created"></asp:Label>
-            <asp:Calendar ID="calendarCreated" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="180px" Width="200px">
+                <asp:Label ID="lblError" runat="server" ForeColor="Red" Visible="false"></asp:Label>
+                <asp:Label ID="lblDueBy" runat="server" AssociatedControlID="calendarDueBy" Text="DueBy"></asp:Label>
+                <asp:Calendar ID="calendarDueBy" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="180px" Width="200px">
                 <DayHeaderStyle BackColor="#CCCCCC" Font-Bold="True" Font-Size="7pt" />
                 <NextPrevStyle VerticalAlign="Bottom" />
                 <OtherMonthDayStyle ForeColor="#808080" />

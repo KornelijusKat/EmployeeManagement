@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -14,8 +15,13 @@ namespace EmployeeManagement
         {
             if (!IsPostBack)
             {
-                BindGridView();            
+                BindGridView();
             }
+        }
+        protected bool preSelectedBool
+        {
+            get { return ViewState["PreSelectedBool"] != null ? (bool)ViewState["PreSelectedBool"] : true; }
+            set { ViewState["PreSelectedBool"] = value; }
         }
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
         {
@@ -34,25 +40,33 @@ namespace EmployeeManagement
             int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
             TextBox textBoxName = row.FindControl("TextBoxName") as TextBox;
             TextBox textBoxDescription = row.FindControl("TextBoxDescription") as TextBox;
-            Calendar calCreated = row.FindControl("TextBoxCreated") as Calendar;
             Calendar calDueBy = row.FindControl("TextBoxDueBy") as Calendar;
             DropDownList dropDownList = row.FindControl("DropDownListStatus") as DropDownList;
             string name = textBoxName.Text;
             string description = textBoxDescription.Text;
-            DateTime created = calCreated.SelectedDate;
             DateTime dueBy = calDueBy.SelectedDate;
-            bool status =bool.Parse(dropDownList.SelectedValue);
+            bool preEditStatus = preSelectedBool;
+            bool status;
+            if (dropDownList.SelectedValue == "")
+            {
+                status = preEditStatus;
+            }
+            else
+            {
+                status = bool.Parse(dropDownList.SelectedValue);
+            }
             var db = new DbContext();
-            db.EditTask(new Task { Id = id, Name = name, Description = description, Created = created, DueBy = dueBy, Status = status });
+            db.EditTask(new Task { Id = id, Name = name, Description = description, DueBy = dueBy, Status = status });
             GridView1.EditIndex = -1;
             BindGridView();
         }
         protected string GetStatusText(bool status)
         {
-            return status ? "Complete" : "In Progress";
+            return status ? "In Progress" : "Complete" ;
         }
         protected void btnShowCreateTaskForm_Click(object sender, EventArgs e)
         {
+            lblError.Visible = false;
             createTaskPanel.Visible = true;
             btnShowCreateTaskForm.Visible = false;
         }
@@ -61,15 +75,20 @@ namespace EmployeeManagement
             string name = txtName.Text;
             string description = txtDescription.Text;
             DateTime dueBy = calendarDueBy.SelectedDate;
-            DateTime created = calendarCreated.SelectedDate;
+            DateTime created = DateTime.Now;
+            if(dueBy < created)
+            {
+                lblError.Text = "Due date cannot be earlier than today";
+                lblError.Visible = true;
+                return;
+            }
             var db = new DbContext();
             db.CreateTask(name, description, false, dueBy, created);
             BindGridView();
             txtName.Text = string.Empty;
             txtDescription.Text = string.Empty;
-            calendarCreated.SelectedDate = DateTime.Today;
-            calendarCreated.SelectedDate = DateTime.Today;
             createTaskPanel.Visible = false;
+            btnShowCreateTaskForm.Visible = true;
         }
         protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
@@ -96,7 +115,6 @@ namespace EmployeeManagement
             GridView2.DataSource = db.GetAllWorkersByTaskID(taskId);
             GridView2.DataBind();
         }
-
         protected void btnAssignTask_Click(object sender, EventArgs e)
         {
             Button btnAssignTask = (Button)sender;
@@ -109,9 +127,7 @@ namespace EmployeeManagement
                 db.WorkerToTask(taskDataKey, dataKey);
                 BindAssignedWorkersToGrid(taskDataKey);
             }
-
         }
-
         protected void btnChangeGrid_Click(object sender, EventArgs e)
         {
             createTaskPanel.Visible = false;
@@ -122,25 +138,18 @@ namespace EmployeeManagement
             int dataKey = Convert.ToInt32(GridView1.DataKeys[clickedRow.RowIndex].Value);
             Session["SelectedDataKey"] = dataKey;
             GridView1.Visible = false;
-            GridViewWorker.Visible = true;
-            GridView2.Visible = true;
+            allWorkerPanel.Visible = true;
+            assignedWorkerPanel.Visible = true;
             BindWorkersToGrid();
             BindAssignedWorkersToGrid(dataKey);
         }
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            var db = new DbContext();
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType == DataControlRowType.DataRow && GridView1.EditIndex == e.Row.RowIndex)
             {
-                GridView GridViewWorkers = e.Row.FindControl("GridViewWorkers") as GridView;
-                if (GridViewWorkers != null)
-                {
-                    int taskId = (int)DataBinder.Eval(e.Row.DataItem, "Id");
-                    List<Worker> workers = db.GetAllWorkersByTaskID(taskId);
-                    GridViewWorkers.DataSource = workers;
-                    GridViewWorkers.DataBind();
-                }
-            }
+                bool preEditStatus = (bool)GridView1.DataKeys[e.Row.RowIndex]["Status"];
+                preSelectedBool = preEditStatus;
+            }         
         }
         protected void btnUnAssignTask_Click(object sender, EventArgs e)
         {
@@ -157,21 +166,20 @@ namespace EmployeeManagement
         }
         protected void btnReturnToTasks_Click(object sender, EventArgs e)
         {
-            GridViewWorker.Visible = false;
-            GridView2.Visible = false;
+            allWorkerPanel.Visible = false;
+            assignedWorkerPanel.Visible = false;
             btnReturnToTasks.Visible = false;
             GridView1.Visible = true;
             btnShowCreateTaskForm.Visible = true;
         }
-
         protected void btnViewWorkersTask_Click(object sender, EventArgs e)
         {
 
         }
-
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             createTaskPanel.Visible = false;
+            btnShowCreateTaskForm.Visible = true;
         }
     }
 }

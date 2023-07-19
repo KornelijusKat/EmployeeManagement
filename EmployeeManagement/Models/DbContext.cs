@@ -10,8 +10,6 @@ namespace EmployeeManagement.Models
     public class DbContext
     {
         public string ConnectionString { get; set; }
-
-
         private MySqlConnection GetConnection()
         {
             return new MySqlConnection(@"server = localhost; port = 3306;user=root; password=test;database=management");
@@ -40,14 +38,11 @@ namespace EmployeeManagement.Models
                 {
                     query += " name = @name,";
                     parameters.Add(new MySqlParameter("@name", task.Name));
-                }
-
-                if (task.Status != null)
-                {
+                }          
                     query += " status = @status,";
-                    int tinyInt = task.Status ? 0 : 1;
+                    int tinyInt = task.Status ? 1 : 0;
                     parameters.Add(new MySqlParameter("@status", tinyInt));
-                }
+                
 
                 if (task.Description != null)
                 {
@@ -59,7 +54,7 @@ namespace EmployeeManagement.Models
                     query += " due_by = @dueBy,";
                     parameters.Add(new MySqlParameter("@dueBy", task.DueBy));
                 }
-                if(task.Created != null)
+                if(task.Created != DateTime.MinValue)
                 {
                     query += " created = @created,";
                     parameters.Add(new MySqlParameter("@created", task.Created));
@@ -167,7 +162,7 @@ namespace EmployeeManagement.Models
             using(var sqlCon = GetConnection())
             {
                 sqlCon.Open();
-                string query = "DELETE FROM tasks WHERE id = @ID";
+                string query = "DELETE tasks, workertask FROM tasks LEFT JOIN workertask ON workertask.task_id = tasks.id WHERE tasks.id = @ID";
                 MySqlCommand cmd = new MySqlCommand(query, sqlCon);
                 cmd.Parameters.AddWithValue("@ID", Id);
                 cmd.ExecuteNonQuery();

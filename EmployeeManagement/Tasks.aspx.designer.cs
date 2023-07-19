@@ -24,6 +24,24 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.GridView GridView1;
 
         /// <summary>
+        /// allWorkerPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel allWorkerPanel;
+
+        /// <summary>
+        /// Label2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label2;
+
+        /// <summary>
         /// GridViewWorker control.
         /// </summary>
         /// <remarks>
@@ -40,6 +58,24 @@ namespace EmployeeManagement
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnReturnToTasks;
+
+        /// <summary>
+        /// assignedWorkerPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel assignedWorkerPanel;
+
+        /// <summary>
+        /// lblGridViewHeader control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblGridViewHeader;
 
         /// <summary>
         /// GridView2 control.
@@ -69,6 +105,15 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.Panel createTaskPanel;
 
         /// <summary>
+        /// ValidatorForNewTaskName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator ValidatorForNewTaskName;
+
+        /// <summary>
         /// lblName control.
         /// </summary>
         /// <remarks>
@@ -85,6 +130,15 @@ namespace EmployeeManagement
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
+
+        /// <summary>
+        /// ValidatorForNewTaskDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator ValidatorForNewTaskDescription;
 
         /// <summary>
         /// lblDescription control.
@@ -105,6 +159,15 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
 
         /// <summary>
+        /// lblError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
+
+        /// <summary>
         /// lblDueBy control.
         /// </summary>
         /// <remarks>
@@ -121,24 +184,6 @@ namespace EmployeeManagement
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Calendar calendarDueBy;
-
-        /// <summary>
-        /// lblCreated control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCreated;
-
-        /// <summary>
-        /// calendarCreated control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calendarCreated;
 
         /// <summary>
         /// btnCreate control.
