@@ -124,22 +124,27 @@ namespace EmployeeManagement
             {
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
                 var db = new DbContext();
-                db.WorkerToTask(taskDataKey, dataKey);
+                var response = db.WorkerToTask(taskDataKey, dataKey);
+                if (!response)
+                {
+                    AssignError.Text = "Task has already been assigned to worker";
+                    AssignError.Visible = true;
+                    return;
+                }
+                AssignError.Visible = false;
                 BindAssignedWorkersToGrid(taskDataKey);
             }
         }
         protected void btnChangeGrid_Click(object sender, EventArgs e)
         {
-            createTaskPanel.Visible = false;
+            AllTasksPanel.Visible = false;
             btnShowCreateTaskForm.Visible = false;
             btnReturnToTasks.Visible = true;
             Button btnAssignTask = (Button)sender;
             GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
             int dataKey = Convert.ToInt32(GridView1.DataKeys[clickedRow.RowIndex].Value);
             Session["SelectedDataKey"] = dataKey;
-            GridView1.Visible = false;
-            allWorkerPanel.Visible = true;
-            assignedWorkerPanel.Visible = true;
+            AssignmentContainer.Visible = true;
             BindWorkersToGrid();
             BindAssignedWorkersToGrid(dataKey);
         }
@@ -166,10 +171,9 @@ namespace EmployeeManagement
         }
         protected void btnReturnToTasks_Click(object sender, EventArgs e)
         {
-            allWorkerPanel.Visible = false;
-            assignedWorkerPanel.Visible = false;
+            AssignmentContainer.Visible = false;
             btnReturnToTasks.Visible = false;
-            GridView1.Visible = true;
+            AllTasksPanel.Visible = true;
             btnShowCreateTaskForm.Visible = true;
         }
         protected void btnViewWorkersTask_Click(object sender, EventArgs e)

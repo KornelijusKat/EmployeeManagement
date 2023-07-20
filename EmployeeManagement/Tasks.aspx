@@ -1,8 +1,9 @@
 ﻿<%@ Page Title="Tasks" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Tasks.aspx.cs" Inherits="EmployeeManagement.Tasks" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-        <h3> </h3>
-        <asp:GridView ID="GridView1" runat="server" DataKeyNames="Id, Status" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" Height="215px">
+  <asp:Panel ID="AllTasksPanel" runat="server">
+     <asp:Label ID="Label3" runat="server" CssClass="lblPadding" Text="Current tasks"></asp:Label>
+     <asp:GridView ID="GridView1" runat="server" DataKeyNames="Id, Status" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" Height="215px">
             <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
     <Columns>
         <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
@@ -59,7 +60,6 @@
             </ItemTemplate>   
         </asp:TemplateField>       
     </Columns>
-
             <EditRowStyle BackColor="#999999" />
             <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
             <HeaderStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
@@ -70,9 +70,11 @@
             <SortedAscendingHeaderStyle BackColor="#506C8C" />
             <SortedDescendingCellStyle BackColor="#FFFDF8" />
             <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
-</asp:GridView>
-    <asp:Panel ID="allWorkerPanel" runat="server" Visible="false"> 
-        <asp:Label ID="Label2" runat="server" Text="All workers"></asp:Label>
+       </asp:GridView>
+</asp:Panel>
+<asp:Panel  ID="AssignmentContainer" class="AssignmentContainer" style="display: flex; flex-direction: row;" runat="server" Visible="false">
+    <asp:Panel ID="allWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;">  
+         <asp:Label ID="Label2" CssClass="lblPadding" runat="server" Text="All workers"></asp:Label>
     <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
@@ -104,10 +106,10 @@
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
     </asp:GridView>
-        </asp:Panel>
-    <asp:Button ID="btnReturnToTasks" runat="server" Text="Cancel assigning" visible="false" OnClick="btnReturnToTasks_Click" />
-    <asp:panel ID="assignedWorkerPanel" CssClass="panels" visible="false" runat="server">
-        <asp:Label ID="lblGridViewHeader" runat="server" Text="Assigned Workers to Task"></asp:Label>
+        <asp:Label ID="AssignError" visible="false" runat="server" style="color: red;"></asp:Label>
+        </asp:Panel>   
+    <asp:panel ID="assignedWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" >
+        <asp:Label ID="lblGridViewHeader" runat="server" CssClass="lblPadding" Text="Assigned Workers to Task"></asp:Label>
       <asp:GridView ID="GridView2" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
@@ -139,10 +141,13 @@
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
     </asp:GridView>
-   </asp:panel>
-
+          </asp:panel>
+  </asp:Panel>
+          <div style="margin-top: 20px" >
         <asp:Button ID="btnShowCreateTaskForm" runat="server" Text="Create New Task" OnClick="btnShowCreateTaskForm_Click" />
-        <asp:Panel ID="createTaskPanel" runat="server" CssClass="create-task-panel" Visible="false" >            
+            </div>
+         <asp:Button ID="btnReturnToTasks" runat="server" Text="Return to tasks" visible="false" OnClick="btnReturnToTasks_Click" />   
+        <asp:Panel ID="createTaskPanel" runat="server" CssClass="taskPanel" Visible="false" >            
               <div class="formDiv">
                   <asp:RequiredFieldValidator ID="ValidatorForNewTaskName" runat="server"
             ControlToValidate="TxtName" ErrorMessage="Name is required"></asp:RequiredFieldValidator>
@@ -171,22 +176,19 @@
                  </div>
              <div class="btnWrap">
             <asp:Button ID="btnCreate" runat="server" Text="Create" OnClick="btnCreateTask_Click" />
-                 <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" />
+                 <asp:Button ID="btnCancel" CausesValidation="False" runat="server" Text="Cancel" OnClick="btnCancel_Click" />
                  </div>
         </asp:Panel>    
     <style>
-    .create-task-panel {
+.taskPanel {
   margin-top: 20px;
   padding: 20px;
   background-color: #f2f2f2;
   border: 1px solid #ccc;
   border-radius: 4px;
   text-align: left;
-  width:fit-content;
- 
-  
+  width:fit-content; 
 }
-
 .formDiv {
   margin-bottom: 15px;
 }
@@ -196,44 +198,14 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
 }
-
-input[type="text"],
-textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.custom-calendar {
-  width: 100%;
-  height: 180px;
-  border: 1px solid #999999;
-}
-
-.custom-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.custom-button:hover {
-  background-color: #45a049;
-}
-
 .btnWrap {
   justify-content: space-between;
    display: flex;
   align-items: center;
  }
+.lblPadding{
+    font-size:36px;
+}
     </style>
 </asp:Content>
 

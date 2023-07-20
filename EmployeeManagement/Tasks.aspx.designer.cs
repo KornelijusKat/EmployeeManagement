@@ -15,6 +15,24 @@ namespace EmployeeManagement
     {
 
         /// <summary>
+        /// AllTasksPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel AllTasksPanel;
+
+        /// <summary>
+        /// Label3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label3;
+
+        /// <summary>
         /// GridView1 control.
         /// </summary>
         /// <remarks>
@@ -22,6 +40,15 @@ namespace EmployeeManagement
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView GridView1;
+
+        /// <summary>
+        /// AssignmentContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel AssignmentContainer;
 
         /// <summary>
         /// allWorkerPanel control.
@@ -51,13 +78,13 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.GridView GridViewWorker;
 
         /// <summary>
-        /// btnReturnToTasks control.
+        /// AssignError control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReturnToTasks;
+        protected global::System.Web.UI.WebControls.Label AssignError;
 
         /// <summary>
         /// assignedWorkerPanel control.
@@ -94,6 +121,15 @@ namespace EmployeeManagement
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnShowCreateTaskForm;
+
+        /// <summary>
+        /// btnReturnToTasks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReturnToTasks;
 
         /// <summary>
         /// createTaskPanel control.
