@@ -33,17 +33,14 @@ namespace EmployeeManagement.Models
                 sqlCon.Open();
                 string query = "UPDATE tasks SET";
                 var parameters = new List<MySqlParameter>();
-
+                query += " status = @status,";
+                int tinyInt = task.Status ? 1 : 0;
+                parameters.Add(new MySqlParameter("@status", tinyInt));
                 if (!string.IsNullOrEmpty(task.Name))
                 {
                     query += " name = @name,";
                     parameters.Add(new MySqlParameter("@name", task.Name));
                 }          
-                    query += " status = @status,";
-                    int tinyInt = task.Status ? 1 : 0;
-                    parameters.Add(new MySqlParameter("@status", tinyInt));
-                
-
                 if (task.Description != null)
                 {
                     query += " description = @description,";
@@ -168,18 +165,18 @@ namespace EmployeeManagement.Models
                 cmd.ExecuteNonQuery();
             }
         }
-        public void WorkerToTask(int taskId, int workerId)
+        public bool WorkerToTask(int taskId, int workerId)
         {
             using (var sqlCon = GetConnection())
             {
                 sqlCon.Open();
-                string query = "INSERT INTO workertask (worker_id, task_id) values (@workerId, @taskId)"
-                + "ON DUPLICATE KEY UPDATE worker_id = worker_id";
+                string query ="INSERT INTO workertask (worker_id, task_id) SELECT @workerId, @taskId WHERE NOT EXISTS (SELECT 1 FROM workertask WHERE worker_id = @workerId AND task_id = @taskId)";
                 using (var cmd = new MySqlCommand(query, sqlCon))
                 {
                     cmd.Parameters.AddWithValue("@taskId", taskId);
                     cmd.Parameters.AddWithValue("@workerId", workerId);
-                    cmd.ExecuteNonQuery();
+                    int commitedAction = cmd.ExecuteNonQuery();
+                    return commitedAction > 0;
                 }
             }
         }
