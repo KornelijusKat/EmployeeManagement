@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
   <asp:Panel ID="AllTasksPanel" runat="server">
      <asp:Label ID="Label3" runat="server" CssClass="lblPadding" Text="Current tasks"></asp:Label>
-     <asp:GridView ID="GridView1" runat="server" DataKeyNames="Id, Status" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" Height="215px">
+     <asp:GridView ID="AllTasksGridView" runat="server" DataKeyNames="Id, Status, Created" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" >
             <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
     <Columns>
         <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
@@ -37,7 +37,7 @@
                 <%# Eval("DueBy") %>
             </ItemTemplate>
             <EditItemTemplate>
-                <asp:Calendar ID="TextBoxDueBy" runat="server" SelectedDate='<%# Bind("DueBy") %>'></asp:Calendar>
+                <asp:Calendar ID="CalendarDueBy" runat="server" SelectedDate='<%# Bind("DueBy") %>'></asp:Calendar>
             </EditItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Status">
@@ -75,7 +75,7 @@
 <asp:Panel  ID="AssignmentContainer" class="AssignmentContainer" style="display: flex; flex-direction: row;" runat="server" Visible="false">
     <asp:Panel ID="allWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;">  
          <asp:Label ID="Label2" CssClass="lblPadding" runat="server" Text="All workers"></asp:Label>
-    <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
+    <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
               <asp:BoundField DataField="Id" HeaderText="ID" />
@@ -110,7 +110,7 @@
         </asp:Panel>   
     <asp:panel ID="assignedWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" >
         <asp:Label ID="lblGridViewHeader" runat="server" CssClass="lblPadding" Text="Assigned Workers to Task"></asp:Label>
-      <asp:GridView ID="GridView2" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="377px">
+      <asp:GridView ID="WorkersToTaskGridView" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
               <asp:BoundField DataField="Id" HeaderText="ID" />
@@ -126,7 +126,7 @@
         </asp:TemplateField>
         <asp:TemplateField>
             <ItemTemplate>
-                <asp:Button ID="btnUnAssignTask" runat="server" Text="UnAssign Worker" OnClick="btnUnAssignTask_Click"/>
+                <asp:Button ID="btnUnAssignTask" runat="server" Text="Unassign Worker" OnClick="btnUnAssignTask_Click"/>
             </ItemTemplate>
         </asp:TemplateField>
         </Columns>
