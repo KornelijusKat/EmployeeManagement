@@ -23,28 +23,37 @@ namespace EmployeeManagement
             get { return ViewState["PreSelectedBool"] != null ? (bool)ViewState["PreSelectedBool"] : true; }
             set { ViewState["PreSelectedBool"] = value; }
         }
+        protected DateTime preEditCreateDate
+        {
+            get { return (DateTime)ViewState["PreEditDate"]; }
+            set { ViewState["PreEditDate"] = value; }
+        }
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
         {
-            GridView1.EditIndex = e.NewEditIndex;
+            AllTasksGridView.EditIndex = e.NewEditIndex;
             BindGridView();
         }
         private void BindGridView()
         {
             var db = new DbContext();
-            GridView1.DataSource = db.GetAllTasks();
-            GridView1.DataBind();
+            AllTasksGridView.DataSource = db.GetAllTasks();
+            AllTasksGridView.DataBind();
         }
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            GridViewRow row = GridView1.Rows[e.RowIndex];
-            int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+            GridViewRow row = AllTasksGridView.Rows[e.RowIndex];
+            int id = Convert.ToInt32(AllTasksGridView.DataKeys[e.RowIndex].Value);
             TextBox textBoxName = row.FindControl("TextBoxName") as TextBox;
             TextBox textBoxDescription = row.FindControl("TextBoxDescription") as TextBox;
-            Calendar calDueBy = row.FindControl("TextBoxDueBy") as Calendar;
+            Calendar calDueBy = row.FindControl("CalendarDueBy") as Calendar;
             DropDownList dropDownList = row.FindControl("DropDownListStatus") as DropDownList;
             string name = textBoxName.Text;
             string description = textBoxDescription.Text;
             DateTime dueBy = calDueBy.SelectedDate;
+            if(dueBy < preEditCreateDate)
+            {
+                dueBy = DateTime.MinValue;
+            }
             bool preEditStatus = preSelectedBool;
             bool status;
             if (dropDownList.SelectedValue == "")
@@ -57,7 +66,7 @@ namespace EmployeeManagement
             }
             var db = new DbContext();
             db.EditTask(new Task { Id = id, Name = name, Description = description, DueBy = dueBy, Status = status });
-            GridView1.EditIndex = -1;
+            AllTasksGridView.EditIndex = -1;
             BindGridView();
         }
         protected string GetStatusText(bool status)
@@ -75,15 +84,15 @@ namespace EmployeeManagement
             string name = txtName.Text;
             string description = txtDescription.Text;
             DateTime dueBy = calendarDueBy.SelectedDate;
-            DateTime created = DateTime.Now;
+            DateTime created = DateTime.Today;
             if(dueBy < created)
             {
-                lblError.Text = "Due date cannot be earlier than today";
+                lblError.Text = "Please select date, due date cannot be earlier than today";
                 lblError.Visible = true;
                 return;
             }
             var db = new DbContext();
-            db.CreateTask(name, description, false, dueBy, created);
+            db.CreateTask(name, description, true, dueBy, created);
             BindGridView();
             txtName.Text = string.Empty;
             txtDescription.Text = string.Empty;
@@ -92,15 +101,15 @@ namespace EmployeeManagement
         }
         protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
+            int id = Convert.ToInt32(AllTasksGridView.DataKeys[e.RowIndex].Value);
             var db = new DbContext();
             db.DeleteTask(id);
-            GridView1.EditIndex = -1;
+            AllTasksGridView.EditIndex = -1;
             BindGridView();
         }
         protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
-            GridView1.EditIndex = -1;
+            AllTasksGridView.EditIndex = -1;
             BindGridView();
         }
         private void BindWorkersToGrid()
@@ -112,8 +121,8 @@ namespace EmployeeManagement
         private void BindAssignedWorkersToGrid(int taskId)
         {
             var db = new DbContext();
-            GridView2.DataSource = db.GetAllWorkersByTaskID(taskId);
-            GridView2.DataBind();
+            WorkersToTaskGridView.DataSource = db.GetAllWorkersByTaskID(taskId);
+            WorkersToTaskGridView.DataBind();
         }
         protected void btnAssignTask_Click(object sender, EventArgs e)
         {
@@ -142,7 +151,7 @@ namespace EmployeeManagement
             btnReturnToTasks.Visible = true;
             Button btnAssignTask = (Button)sender;
             GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
-            int dataKey = Convert.ToInt32(GridView1.DataKeys[clickedRow.RowIndex].Value);
+            int dataKey = Convert.ToInt32(AllTasksGridView.DataKeys[clickedRow.RowIndex].Value);
             Session["SelectedDataKey"] = dataKey;
             AssignmentContainer.Visible = true;
             BindWorkersToGrid();
@@ -150,9 +159,10 @@ namespace EmployeeManagement
         }
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow && GridView1.EditIndex == e.Row.RowIndex)
+            if (e.Row.RowType == DataControlRowType.DataRow && AllTasksGridView.EditIndex == e.Row.RowIndex)
             {
-                bool preEditStatus = (bool)GridView1.DataKeys[e.Row.RowIndex]["Status"];
+                bool preEditStatus = (bool)AllTasksGridView.DataKeys[e.Row.RowIndex]["Status"];
+                preEditCreateDate = (DateTime)AllTasksGridView.DataKeys[e.Row.RowIndex]["Created"];
                 preSelectedBool = preEditStatus;
             }         
         }
@@ -161,7 +171,7 @@ namespace EmployeeManagement
             var db = new DbContext();
             Button btnUnAssignTask = (Button)sender;
             GridViewRow clickedRow = (GridViewRow)btnUnAssignTask.NamingContainer;
-            int dataKey = Convert.ToInt32(GridView2.DataKeys[clickedRow.RowIndex].Value);
+            int dataKey = Convert.ToInt32(WorkersToTaskGridView.DataKeys[clickedRow.RowIndex].Value);
             if (Session["SelectedDataKey"] != null)
             {
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);

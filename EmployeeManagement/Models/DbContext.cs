@@ -46,7 +46,7 @@ namespace EmployeeManagement.Models
                     query += " description = @description,";
                     parameters.Add(new MySqlParameter("@description", task.Description));
                 }
-                if (task.DueBy != null)
+                if (task.DueBy != DateTime.MinValue)
                 {
                     query += " due_by = @dueBy,";
                     parameters.Add(new MySqlParameter("@dueBy", task.DueBy));
