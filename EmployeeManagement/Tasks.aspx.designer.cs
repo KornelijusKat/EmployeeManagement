@@ -51,13 +51,13 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.Panel AssignmentContainer;
 
         /// <summary>
-        /// allWorkerPanel control.
+        /// allWorkerPanels control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel allWorkerPanel;
+        protected global::System.Web.UI.WebControls.Panel allWorkerPanels;
 
         /// <summary>
         /// Label2 control.
@@ -87,13 +87,13 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.Label AssignError;
 
         /// <summary>
-        /// assignedWorkerPanel control.
+        /// assignedWorkerPanels control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel assignedWorkerPanel;
+        protected global::System.Web.UI.WebControls.Panel assignedWorkerPanels;
 
         /// <summary>
         /// lblGridViewHeader control.
