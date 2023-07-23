@@ -29,12 +29,12 @@
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Created">
             <ItemTemplate>
-                <%# Eval("Created") %>
+                <%# Eval("Created", "{0:yyyy-MM-dd}") %>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="DueBy">
             <ItemTemplate>
-                <%# Eval("DueBy") %>
+                <%# Eval("DueBy", "{0:yyyy-MM-dd}") %>
             </ItemTemplate>
             <EditItemTemplate>
                 <asp:Calendar ID="CalendarDueBy" runat="server" SelectedDate='<%# Bind("DueBy") %>'></asp:Calendar>
@@ -75,7 +75,7 @@
 <asp:Panel  ID="AssignmentContainer" class="AssignmentContainer" style="display: flex; flex-direction: row;" runat="server" Visible="false"  >
     <asp:Panel ID="allWorkerPanels" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" Width="569px"> 
         
-         <asp:Label ID="Label2" CssClass="lblPadding" runat="server" Text="All workers"></asp:Label>
+         <asp:Label ID="Label2" CssClass="lblPadding" runat="server" Text="Unassigned workers"></asp:Label>
     <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>

@@ -1,9 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Workers.aspx.cs" Inherits="EmployeeManagement.Workers" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <asp:Panel ID="WorkersPanel" runat="server" style="display: flex; flex-direction: row;" Width="1138px" >
-        <asp:Panel ID="AllWorkersPanel" runat="server" Width="569px">
+        <asp:Panel ID="AllWorkersPanel" runat="server" style="display: flex; flex-direction: column;" >
             <asp:Label ID="WorkersTasksLabel" runat="server" CssClass="lblGrid">Tasks assigned to workers</asp:Label>
-            <asp:GridView ID="WorkersTasksGridView" DataKeyNames="Id" runat="server" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" ViewStateMode="Enabled" >
+            <asp:GridView ID="WorkersTasksGridView" DataKeyNames="Id" runat="server" CssClass="Grids" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" ViewStateMode="Enabled"  Width="570px">
                 <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
                 <Columns>
                       <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
@@ -17,14 +17,9 @@
                 <%# Eval("Description") %>
                     </ItemTemplate>
                  </asp:TemplateField>
-                <asp:TemplateField HeaderText="Created">
-                    <ItemTemplate>
-                <%# Eval("Created") %>
-                    </ItemTemplate>
-                </asp:TemplateField>
                 <asp:TemplateField HeaderText="DueBy">
                     <ItemTemplate>
-                <%# Eval("DueBy") %>
+                <%# Eval("DueBy", "{0:yyyy-MM-dd}") %>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Status">
@@ -50,9 +45,9 @@
                 <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
             </asp:GridView>
         </asp:Panel>
-        <asp:Panel ID="AllTasksPanel" runat="server" Width="569px">
+        <asp:Panel ID="AllTasksPanel" runat="server" style="display: flex; flex-direction: column;" >
             <asp:Label ID="AllTasksLabel" runat="server" CssClass="lblGrid" >All current tasks</asp:Label>
-            <asp:GridView ID="AllTasks" DataKeyNames="Id" runat="server" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" >
+            <asp:GridView ID="AllTasks" DataKeyNames="Id" CssClass="Grids" runat="server" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="570px"  >
                 <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
                 <Columns>
                  <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
@@ -66,14 +61,9 @@
                 <%# Eval("Description") %>
                     </ItemTemplate>
                  </asp:TemplateField>
-                <asp:TemplateField HeaderText="Created">
-                    <ItemTemplate>
-                <%# Eval("Created") %>
-                    </ItemTemplate>
-                </asp:TemplateField>
                 <asp:TemplateField HeaderText="DueBy">
                     <ItemTemplate>
-                <%# Eval("DueBy") %>
+                <%# Eval("DueBy", "{0:yyyy-MM-dd}") %>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Status">
@@ -98,12 +88,23 @@
                 <SortedDescendingCellStyle BackColor="#FFFDF8" />
                 <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
             </asp:GridView>
-          <asp:Label ID="AsgnError" runat="server"> </asp:Label>
         </asp:Panel>
     </asp:Panel>
+    <p> </p>
+    <asp:Button ID="btnGoToTasks" runat="server" Text="Go to Tasks" OnClick="btnGoToTasks_Click"/>
+    <asp:Button ID="btnGoToWorkers" runat="server" Text="Go To Workers" OnClick="btnGoToWorkers_Click"/>
     <style>
         .lblGrid{
             font-size: 36px;
         }
+        .Grids{
+            padding:5px;
+        }
+     /*   label{
+         
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }*/
     </style>
 </asp:Content>

@@ -78,12 +78,21 @@ namespace EmployeeManagement
         protected global::System.Web.UI.WebControls.GridView AllTasks;
 
         /// <summary>
-        /// AsgnError control.
+        /// btnGoToTasks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label AsgnError;
+        protected global::System.Web.UI.WebControls.Button btnGoToTasks;
+
+        /// <summary>
+        /// btnGoToWorkers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnGoToWorkers;
     }
 }
