@@ -2,6 +2,7 @@
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -12,7 +13,7 @@ namespace EmployeeManagement.Models
         public string ConnectionString { get; set; }
         private MySqlConnection GetConnection()
         {
-            return new MySqlConnection(@"server = localhost; port = 3306;user=root; password=test;database=management");
+            return new MySqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
         }
         public void CreateWorker(string name, string lastName)
         {
