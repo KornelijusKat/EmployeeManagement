@@ -88,6 +88,7 @@ namespace EmployeeManagement.Models
             {            
                 sqlCon.Open();
                 string query = "SELECT * FROM tasks";
+                
                 MySqlCommand cmd = new MySqlCommand(query, sqlCon);
                 using(MySqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -165,6 +166,58 @@ namespace EmployeeManagement.Models
                 cmd.ExecuteNonQuery();
             }
         }
+        public List<Worker> GetAllFreeWorkers(int taskId)
+        {
+            var workers = new List<Worker>();
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "SELECT DISTINCT id, name, last_name FROM workers WHERE NOT EXISTS (SELECT 1 FROM workertask WHERE worker_id = workers.id AND task_id = @taskId)"; ;
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("taskId", taskId);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        workers.Add(new Worker()
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            LastName = reader.GetString("last_name")
+                        });
+                    }
+                }
+            }
+            return workers;
+        }
+        public List<Task> GetAllFreeTasks(int workerId)
+        {
+            var tasks = new List<Task>();
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "SELECT DISTINCT tasks.id, tasks.name, tasks.description, tasks.created, tasks.due_by, tasks.status FROM tasks" +
+                                " WHERE NOT EXISTS(SELECT 1 FROM workertask WHERE task_id = tasks.id AND worker_id = @workerId)";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("@workerId", workerId);
+                using(MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        tasks.Add(new Task()
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            Description = reader.GetString("description"),
+                            Created = reader.GetDateTime("created"),
+                            DueBy = reader.GetDateTime("due_by"),
+                            Status = reader.GetBoolean("status")
+                        });
+                    }
+                }
+            }
+            return tasks;
+        }
         public bool WorkerToTask(int taskId, int workerId)
         {
             using (var sqlCon = GetConnection())
@@ -193,6 +246,33 @@ namespace EmployeeManagement.Models
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+        public List<Task> GetAllTasksOfWorker(int Id)
+        {
+            var taskList = new List<Task>();
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "SELECT DISTINCT tasks.id, tasks.name, tasks.description, tasks.created, tasks.due_by, tasks.status FROM tasks INNER JOIN workertask on workertask.task_id = tasks.id WHERE workertask.worker_id = @workerId";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("workerId", Id);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        taskList.Add(new Task()
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name"),
+                            Description = reader.GetString("description"),
+                            Created = reader.GetDateTime("created"),
+                            DueBy = reader.GetDateTime("due_by"),
+                            Status = reader.GetBoolean("status")
+                        });
+                    }
+                }
+            }
+            return taskList;
         }
     }
 }

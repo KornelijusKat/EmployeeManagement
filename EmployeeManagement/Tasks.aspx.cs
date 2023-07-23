@@ -85,7 +85,7 @@ namespace EmployeeManagement
             string description = txtDescription.Text;
             DateTime dueBy = calendarDueBy.SelectedDate;
             DateTime created = DateTime.Today;
-            if(dueBy < created)
+            if (dueBy < created)
             {
                 lblError.Text = "Please select date, due date cannot be earlier than today";
                 lblError.Visible = true;
@@ -112,10 +112,10 @@ namespace EmployeeManagement
             AllTasksGridView.EditIndex = -1;
             BindGridView();
         }
-        private void BindWorkersToGrid()
+        private void BindWorkersToGrid(int taskId)
         {
             var db = new DbContext();
-            GridViewWorker.DataSource = db.GetAllWorkers();
+            GridViewWorker.DataSource = db.GetAllFreeWorkers(taskId);
             GridViewWorker.DataBind();
         }
         private void BindAssignedWorkersToGrid(int taskId)
@@ -134,14 +134,9 @@ namespace EmployeeManagement
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
                 var db = new DbContext();
                 var response = db.WorkerToTask(taskDataKey, dataKey);
-                if (!response)
-                {
-                    AssignError.Text = "Task has already been assigned to worker";
-                    AssignError.Visible = true;
-                    return;
-                }
-                AssignError.Visible = false;
+                BindWorkersToGrid(taskDataKey);
                 BindAssignedWorkersToGrid(taskDataKey);
+
             }
         }
         protected void btnChangeGrid_Click(object sender, EventArgs e)
@@ -154,8 +149,9 @@ namespace EmployeeManagement
             int dataKey = Convert.ToInt32(AllTasksGridView.DataKeys[clickedRow.RowIndex].Value);
             Session["SelectedDataKey"] = dataKey;
             AssignmentContainer.Visible = true;
-            BindWorkersToGrid();
+            BindWorkersToGrid(dataKey);
             BindAssignedWorkersToGrid(dataKey);
+
         }
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -177,6 +173,7 @@ namespace EmployeeManagement
                 int taskDataKey = Convert.ToInt32(Session["SelectedDataKey"]);
                 db.DeleteWorkerTaskPair(taskDataKey, dataKey);
                 BindAssignedWorkersToGrid(taskDataKey);
+                BindWorkersToGrid(taskDataKey);
             }
         }
         protected void btnReturnToTasks_Click(object sender, EventArgs e)
@@ -186,14 +183,28 @@ namespace EmployeeManagement
             AllTasksPanel.Visible = true;
             btnShowCreateTaskForm.Visible = true;
         }
-        protected void btnViewWorkersTask_Click(object sender, EventArgs e)
-        {
-
-        }
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             createTaskPanel.Visible = false;
             btnShowCreateTaskForm.Visible = true;
+        }
+
+        protected void btnToWorkerView_Click(object sender, EventArgs e)
+        {
+            Button btnAssignTask = (Button)sender;
+            GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
+            var id = GridViewWorker.DataKeys[clickedRow.RowIndex].Value;
+            Session["SelectedWorkerKey"] = id;
+            Response.Redirect("Workers.aspx?recordId=" + id.ToString());
+        }
+
+        protected void btnToWorkerView2_Click(object sender, EventArgs e)
+        {
+            Button btnAssignTask = (Button)sender;
+            GridViewRow clickedRow = (GridViewRow)btnAssignTask.NamingContainer;
+            var id = AllTasksGridView.DataKeys[clickedRow.RowIndex].Value;
+            Session["SelectedWorkerKey"] = id;
+            Response.Redirect("Workers.aspx?recordId=" + id.ToString());
         }
     }
 }

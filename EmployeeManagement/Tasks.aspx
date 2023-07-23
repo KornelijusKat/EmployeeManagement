@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
   <asp:Panel ID="AllTasksPanel" runat="server">
      <asp:Label ID="Label3" runat="server" CssClass="lblPadding" Text="Current tasks"></asp:Label>
-     <asp:GridView ID="AllTasksGridView" runat="server" DataKeyNames="Id, Status, Created" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" >
+     <asp:GridView ID="AllTasksGridView" runat="server" DataKeyNames="Id, Status, Created" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" OnRowEditing="GridView1_RowEditing" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowUpdating="GridView1_RowUpdating" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1138px" ViewStateMode="Enabled">
             <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
     <Columns>
         <asp:BoundField DataField="Id" HeaderText="ID" ReadOnly="true" />
@@ -72,8 +72,9 @@
             <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
        </asp:GridView>
 </asp:Panel>
-<asp:Panel  ID="AssignmentContainer" class="AssignmentContainer" style="display: flex; flex-direction: row;" runat="server" Visible="false">
-    <asp:Panel ID="allWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;">  
+<asp:Panel  ID="AssignmentContainer" class="AssignmentContainer" style="display: flex; flex-direction: row;" runat="server" Visible="false"  >
+    <asp:Panel ID="allWorkerPanels" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" Width="569px"> 
+        
          <asp:Label ID="Label2" CssClass="lblPadding" runat="server" Text="All workers"></asp:Label>
     <asp:GridView ID="GridViewWorker" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
@@ -92,6 +93,7 @@
         <asp:TemplateField>
             <ItemTemplate>
                 <asp:Button ID="btnAssignTask" runat="server" Text="Assign Worker" OnClick="btnAssignTask_Click"/>
+                <asp:Button ID="btnToWorkerView" runat="server" Text="View Workers Tasks" OnClick="btnToWorkerView_Click" />
             </ItemTemplate>
         </asp:TemplateField>
         </Columns>
@@ -105,12 +107,14 @@
         <SortedAscendingHeaderStyle BackColor="#506C8C" />
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
+        
     </asp:GridView>
         <asp:Label ID="AssignError" visible="false" runat="server" style="color: red;"></asp:Label>
         </asp:Panel>   
-    <asp:panel ID="assignedWorkerPanel" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" >
+    <asp:Panel ID="assignedWorkerPanels" CssClass="panels" runat="server" style="display: flex; flex-direction: column;" Width="569px" >
+          
         <asp:Label ID="lblGridViewHeader" runat="server" CssClass="lblPadding" Text="Assigned Workers to Task"></asp:Label>
-      <asp:GridView ID="WorkersToTaskGridView" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px">
+      <asp:GridView ID="WorkersToTaskGridView" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CellPadding="4" ForeColor="#333333" GridLines="None" Width="569px" ViewStateMode="Enabled">
         <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
         <Columns>
               <asp:BoundField DataField="Id" HeaderText="ID" />
@@ -127,6 +131,7 @@
         <asp:TemplateField>
             <ItemTemplate>
                 <asp:Button ID="btnUnAssignTask" runat="server" Text="Unassign Worker" OnClick="btnUnAssignTask_Click"/>
+                <asp:Button ID="btnToWorkerView2" runat="server" Text="View Workers Tasks" OnClick="btnToWorkerView2_Click" />
             </ItemTemplate>
         </asp:TemplateField>
         </Columns>
@@ -141,7 +146,7 @@
         <SortedDescendingCellStyle BackColor="#FFFDF8" />
         <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
     </asp:GridView>
-          </asp:panel>
+          </asp:Panel>
   </asp:Panel>
           <div style="margin-top: 20px" >
         <asp:Button ID="btnShowCreateTaskForm" runat="server" Text="Create New Task" OnClick="btnShowCreateTaskForm_Click" />
@@ -207,5 +212,6 @@ label {
     font-size:36px;
 }
     </style>
+
 </asp:Content>
 
