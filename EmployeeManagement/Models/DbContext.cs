@@ -21,8 +21,8 @@ namespace EmployeeManagement.Models
                 sqlCon.Open();
                 string query = "INSERT INTO workers(name, last_name) Values(@Name, @LastName)";
                 MySqlCommand cmd = new MySqlCommand(query,sqlCon);
-                cmd.Parameters.AddWithValue("name", name);
-                cmd.Parameters.AddWithValue("last_name", lastName);
+                cmd.Parameters.AddWithValue("Name", name);
+                cmd.Parameters.AddWithValue("LastName", lastName);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -166,6 +166,17 @@ namespace EmployeeManagement.Models
                 cmd.ExecuteNonQuery();
             }
         }
+        public void DeleteWorker(int Id)
+        {
+            using(var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "DELETE workers, workertask FROM workers LEFT JOIN workertask ON workertask.worker_id = workers.id WHERE workers.id = @ID";
+                MySqlCommand cmd = new MySqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("@ID", Id);
+                cmd.ExecuteNonQuery();
+            }
+        }
         public List<Worker> GetAllFreeWorkers(int taskId)
         {
             var workers = new List<Worker>();
@@ -273,6 +284,37 @@ namespace EmployeeManagement.Models
                 }
             }
             return taskList;
+        }
+        public void EditWorker(Worker worker)
+        {
+            using (var sqlCon = GetConnection())
+            {
+                sqlCon.Open();
+                string query = "UPDATE workers SET";
+                var parameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(worker.Name))
+                {
+                    query += " name = @name,";
+                    parameters.Add(new MySqlParameter("@name", worker.Name));
+                }
+
+                if (!string.IsNullOrEmpty(worker.LastName))
+                {
+                    query += " last_name = @lastName,";
+                    parameters.Add(new MySqlParameter("@lastName", worker.LastName));
+                }
+
+                query = query.TrimEnd(',');
+                query += " WHERE id = @Id";
+                parameters.Add(new MySqlParameter("@Id", worker.Id));
+
+                using (var cmd = new MySqlCommand(query, sqlCon))
+                {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

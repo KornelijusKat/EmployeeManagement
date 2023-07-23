@@ -80,5 +80,15 @@ namespace EmployeeManagement
                 BindAllTasks();
             }
         }
+
+        protected void btnGoToTasks_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Tasks.aspx");
+        }
+
+        protected void btnGoToWorkers_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("WorkerGrid.aspx");
+        }
     }
 }
